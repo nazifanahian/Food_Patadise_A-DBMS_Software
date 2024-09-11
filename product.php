@@ -1,89 +1,54 @@
-<?php
+<?php 
 require('top.php');
-
-if(isset($_GET['type']) && $_GET['type']!=''){
-	$type=get_safe_value($con,$_GET['type']);
-	if($type=='status'){
-		$operation=get_safe_value($con,$_GET['operation']);
-		$id=get_safe_value($con,$_GET['id']);
-		if($operation=='active'){
-			$status='1';
-		}else{
-			$status='0';
-		}
-		$update_status_sql="update product set status='$status' where ID='$id'";
-		mysqli_query($con,$update_status_sql);
-	}
-	
-	if($type=='delete'){
-		$id=get_safe_value($con,$_GET['id']);
-		$delete_sql="delete from product where ID='$id'";
-		mysqli_query($con,$delete_sql);
-	}
+if(isset($_GET['id'])){
+	$product_id=mysqli_real_escape_string($con,$_GET['id']);
+	if($product_id>0){
+$get_product=get_product($con,'','',$product_id);
 }
-
-$sql="select product.*,category.categories from product,category where product.categories_id=category.ID order by product.ID desc";
-$res=mysqli_query($con,$sql);
+}
 ?>
-<div class="content pb-0">
-	<div class="orders">
-	   <div class="row">
-		  <div class="col-xl-12">
-			 <div class="card">
-				<div class="card-body">
-				   <h4 class="box-title">Products </h4>
-				   <h4 class="box-link"><a href="add_products.php">Add Product</a> </h4>
-				</div>
-				<div class="card-body--">
-				   <div class="table-stats order-table ov-h">
-					  <table class="table ">
-						 <thead>
-							<tr>
-							   <th class="serial">#</th>
-							   <th>ID</th>
-							   <th>Categories</th>
-							   <th>Name</th>
-							   <th>Image</th>
-							   <th>Price</th>
-							   <th>Quantity</th>
-							   <th></th>
-							</tr>
-						 </thead>
-						 <tbody>
-							<?php 
-							$i=1;
-							while($row=mysqli_fetch_assoc($res)){?>
-							<tr>
-							   <td class="serial"><?php echo $i?></td>
-							   <td><?php echo $row['ID']?></td>
-							   <td><?php echo $row['categories']?></td>
-							   <td><?php echo $row['name']?></td>
-							   <td><img src="<?php echo PRODUCT_IMAGE_SITE_PATH.$row['image']?>"/></td>
-							   <td><?php echo $row['price']?></td>
-							   <td><?php echo $row['quantity']?></td>
-							   <td>
-								<?php
-								if($row['status']==1){
-									echo "<span class='badge badge-complete'><a href='?type=status&operation=deactive&id=".$row['ID']."'>Active</a></span>&nbsp;";
-								}else{
-									echo "<span class='badge badge-pending'><a href='?type=status&operation=active&id=".$row['ID']."'>Deactive</a></span>&nbsp;";
-								}
-								echo "<span class='badge badge-edit'><a href='add_products.php?id=".$row['ID']."'>Edit</a></span>&nbsp;";
-								
-								echo "<span class='badge badge-delete'><a href='?type=delete&id=".$row['ID']."'>Delete</a></span>";
-								
-								?>
-							   </td>
-							</tr>
-							<?php 
-							$i++;
-						} ?>
-						 </tbody>
-					  </table>
-				   </div>
-				</div>
-			 </div>
-		  </div>
-	   </div>
-	</div>
+<div class="heading">
+    <h1>Our Store</h1>
+    <p><a href="index.php">Home>></a>product</p>
 </div>
+
+<section class="product" id="product">
+    <div class="box-container">
+     <?php
+     $get_product=get_product($con,'','','');
+     foreach($get_product as $row){
+     ?> 
+     <form action="insertcart.php" method="POST">
+        <div class="box">
+            <img src="<?php echo PRODUCT_IMAGE_SITE_PATH.$row['image']?>" alt="image">
+            <h3><?php echo $row['name']?></h3>
+            <div class="stars">
+             <i class="fas fa-star"></i>
+             <i class="fas fa-star"></i>
+             <i class="fas fa-star"></i>
+             <i class="fas fa-star"></i>
+             <i class="fas fa-star-half-alt"></i>
+            </div>
+                <div class="price">TK <?php echo $row['price']?></div>
+                <input type='hidden' name='name' value= <?php echo $row['name']?>>
+                <input type='hidden' name='price' value= <?php echo $row['price']?>> 
+                <div class="quantity" id="qty">
+                     <span>quantity:</span>
+                     <input type="number" name="quantity" min="1" max="10" value="1">
+                 </div>
+             
+                 <?php if(isset($_SESSION['USER_LOGIN'])){
+
+             echo "<input type='submit' name='addcart' class='btn btn-warning text-white w-100' value='Add To Cart'>";
+              }else{
+               echo 'please login first';
+                }
+              ?>
+              
+        </div>
+        </form>
+     <?php } ?> 
+    </div>
+</section>
+     
+

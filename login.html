@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customer Login Form</title>
+    <link rel="stylesheet" href="customersignIn.css">
+</head>
+<body>
+    <div class="center">
+     <h1>Customer Login</h1>
+     <form action="customerSignin.php" method="post">
+     <div class="txt_field">
+        <input type="email" name="Email" required>
+        <span></span>
+        <label>Email</label>
+        </div>
+        <div class="txt_field">
+        <input type="password" name="Password"  maxlength="10" required>
+        <span></span>
+        <label>Password</label>
+        </div>
+        <div class="pass">
+            <a href="forgetpass.html">Forgot Password?</a>
+        </div>
+       <input type="submit" value = login>
+        <div class="signup_link">
+         Not a member? <a href="register.php">Sign Up</a>
+        </div>
+        </form>
+    </div>
+</body>
+</html>
